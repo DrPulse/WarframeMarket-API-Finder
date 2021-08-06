@@ -43,9 +43,9 @@ WMitemR = requests.get('https://api.warframe.market/v1/items/' + search.replace(
 #WMitemR = requests.get('https://api.warframe.market/v1/items/mesa_prime_set/statistics') # a retirer a terme
 #pprint.pprint(WMitemR.json())
 print(WMitemR)
-if(WMitemR.status_code == 200):
+if WMitemR.status_code == 200:
     print("Request OK\n")
-elif(WMitemR.status_code == 404):
+elif WMitemR.status_code == 404:
     print("Request denied\n")
 
 #Output data in a json file
@@ -68,10 +68,8 @@ print(test)
     
 print("\nThe minimum price found in the last 48 hours for " + search +" is" , MinPrice , "platinum\n")
 
-
-"""
-print('Would you like to buy/sell ' + string.capwords(search) + "? y/n")
+#Ask to open the web page of the requested item
+print("Would you like to buy/sell " + string.capwords(search) + "? y/n")
 browser_answer = input()
 if browser_answer == "y":
 	webbrowser.open_new('https://warframe.market/items/' + search.replace(' ', '_'))
-"""

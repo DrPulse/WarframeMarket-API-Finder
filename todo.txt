@@ -1,0 +1,6 @@
+- Sélection et affichage des 5 prix les plus bas des dernières 24h
+- Ajout de fonctions pour clarifier le code
+- Ajout de boucles 
+- Pouvoir ajouter le tracking des prix d'un item dans un fichier
+- Boucle qui check toutes les 5 min le prix des items trackés de
+- Ajout d'un "menu" de sélection entre : tracking, recherche de prix d'un item, ajout d'item à tracké avec le tracking qui boucle par défaut 
