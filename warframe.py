@@ -11,11 +11,11 @@ def warframe():
 	search = input()
 	print("Searching for " + string.capwords(search) + "...")
 
-	main_url = req_url('https://api.warframe.market/v1/items' + search.replace(' ', '_') + '/statistics')
+	main_url = req_url('https://api.warframe.market/v1/items/' + search.replace(' ', '_') + '/statistics')
 	data = main_url.read()
 	parsed = json.loads(data)
-	parsed_data = parsed['payload']['statistics_closed']['48hours'][-1]['min_price']
-	date_time = parsed['payload']['statistics']['48hours'][-1]['datetime']
+	parsed_data = parsed['payload']['statistics_live']['48hours'][-1]['min_price']
+	date_time = parsed['payload']['statistics_live']['48hours'][-1]['datetime']
 
 	print(string.capwords(search) + " minimum price is " + str(parsed_data) + " platinum as of " + date_time)
 
