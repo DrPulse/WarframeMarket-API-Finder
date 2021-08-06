@@ -58,14 +58,16 @@ MinPrice = data['payload']['statistics_live']['48hours'][1]['min_price'] #Grab t
 data_access = data['payload']['statistics_live']['48hours'] #Precising the data field
 
 #Loop for determining the lowest price available
+i=0
 for item in data_access:
+    i+=1
     if item['order_type'] == "sell":
         if item['min_price'] < MinPrice: 
             MinPrice = item['min_price']
-            test = data_access[3]
+            data_item = data_access[i+1]
             
-print(test)
-    
+print(data_item)
+
 print("\nThe minimum price found in the last 48 hours for " + search +" is" , MinPrice , "platinum\n")
 
 #Ask to open the web page of the requested item
