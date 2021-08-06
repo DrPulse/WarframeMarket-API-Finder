@@ -62,8 +62,9 @@ for item in data_access:
     if item['order_type'] == "sell":
         if item['min_price'] < MinPrice: 
             MinPrice = item['min_price']
+            test = data_access[3]
             
-print(data_access[3])
+print(test)
     
 print("\nThe minimum price found in the last 48 hours for " + search +" is" , MinPrice , "platinum\n")
 
