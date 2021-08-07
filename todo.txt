@@ -1,4 +1,6 @@
 - Sélection et affichage des 5 prix les plus bas des dernières 24h
+    Presque OK, tri à faire sur la string date pour affichage
+
 - Ajout de fonctions pour clarifier le code
 - Ajout de boucles 
 - Pouvoir ajouter le tracking des prix d'un item dans un fichier

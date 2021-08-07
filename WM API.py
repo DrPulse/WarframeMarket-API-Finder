@@ -41,7 +41,7 @@ print("\nSearching for " + search + "...\n")
 #search = "mesa_prime_set"
 WMitemR = requests.get('https://api.warframe.market/v1/items/' + search.replace(' ', '_') + '/statistics')
 #WMitemR = requests.get('https://api.warframe.market/v1/items/mesa_prime_set/statistics') # a retirer a terme
-#pprint.pprint(WMitemR.json())
+#pprint.pprint(WMitemR.json()) #print de test pour les infos de l'item
 print(WMitemR)
 if WMitemR.status_code == 200:
     print("Request OK\n")
@@ -58,20 +58,26 @@ MinPrice = data['payload']['statistics_live']['48hours'][1]['min_price'] #Grab t
 data_access = data['payload']['statistics_live']['48hours'] #Precising the data field
 
 #Loop for determining the lowest price available
-i=0
+i=0; j=0
+WMList = []
 for item in data_access:
     i+=1
     if item['order_type'] == "sell":
-        if item['min_price'] < MinPrice: 
-            MinPrice = item['min_price']
-            data_item = data_access[i+1]
-            
-print(data_item)
+        WMList.insert(j,data_access[i-1])
+        j+=1
 
-print("\nThe minimum price found in the last 48 hours for " + search +" is" , MinPrice , "platinum\n")
+#Sorting by date first and then lowest price
+SortedWMList = sorted(WMList, key= lambda x: (x['min_price'], x['datetime']))
+#print(SortedWMList[0:4]) #Print of only the 5 first elements
+
+
+print("\nThe 5 minimum prices found in the last ~48 hours for " + search +" are")
+
+for y in range(5):
+    print(SortedWMList[y]['min_price'],"platinum as of :", SortedWMList[y]['datetime'])
 
 #Ask to open the web page of the requested item
-print("Would you like to buy/sell " + string.capwords(search) + "? y/n")
+print("\nWould you like to buy/sell " + string.capwords(search) + "? y/n")
 browser_answer = input()
 if browser_answer == "y":
 	webbrowser.open_new('https://warframe.market/items/' + search.replace(' ', '_'))
