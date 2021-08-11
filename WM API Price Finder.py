@@ -4,7 +4,7 @@ import string
 import pprint
 import webbrowser
 
-#URL and credentials storage
+# URL and credentials storage
 password = ""
 mail = ""
 Token_JWT = ""
@@ -13,14 +13,14 @@ login_URL = "https://api.warframe.market/v1/auth/signin"
 profile_URL = "https://api.warframe.market/v1/profile"
 
 
-#Main function that will loop forever
+# Main function that will loop forever
 def WarframeMain():
     
-    #Searching for item in a loop if it fails
+    # Searching for item in a loop if it fails
     while True:
         print("Search for an item")
         search = input()
-        print("\nSearching for " + search + "...\n")
+        print("\nSearching for " + search.upper().replace('_', ' ') + "...\n")
 
         #search = "mesa_prime_set"
         WMitemR = requests.get('https://api.warframe.market/v1/items/' + search.replace(' ', '_') + '/statistics')
@@ -31,18 +31,18 @@ def WarframeMain():
             print("Request OK\n")
             break
         elif WMitemR.status_code == 404:
-            print("Request failed\nMake sure to use the proper name of items, ex : mesa prime set, mesa prime blueprint\n")
+            print("Request failed\n\nMake sure to use the proper name of items, ex : mesa prime set, mesa prime blueprint\n")
 
-    #Output data in a json file
+    # Output data in a json file
     data = WMitemR.json()
     with open ('data.json', 'w') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
-    #Looking for the lowest prices
+    # ooking for the lowest prices
     MinPrice = data['payload']['statistics_live']['48hours'][1]['min_price'] #Grab the first sell value of live statistics for the last 48 hours
     data_access = data['payload']['statistics_live']['48hours'] #Precising the data field
 
-    #Loop for determining the lowest price available
+    # Loop for determining the lowest price available
     i=0; j=0
     WMList = []
     for item in data_access:
@@ -51,20 +51,23 @@ def WarframeMain():
             WMList.insert(j,data_access[i-1])
             j+=1
 
-    #Sorting by date first and then lowest price
+    # Sorting by date first and then lowest price
     SortedWMList = sorted(WMList, key= lambda x: (x['min_price'], x['datetime']))
+    print("\nThe 5 minimum prices found in the last ~48 hours for " + search.upper().replace('_', ' ') +" are\n")
 
-    print("\nThe 5 minimum prices found in the last ~48 hours for " + search +" are")
-
-    #Print of only the 5 first elements
+    # Print of only the 5 first elements
     for element in range(5):
         print(SortedWMList[element]['min_price'],"platinum as of :", SortedWMList[element]['datetime'])
 
-    #Ask to open the web page of the requested item
-    print("\nWould you like to buy/sell " + string.capwords(search) + "? Y/n")
-    browser_answer = input()
-    if browser_answer == "y" or browser_answer == "":
-        webbrowser.open_new('https://warframe.market/items/' + search.replace(' ', '_'))
+
+    # Ask to open the web page of the requested item
+    def browser_open():
+        print("\nWould you like to buy/sell " + search.upper().replace('_', ' ') + " ? y/n")
+        browser_answer = input()
+        if browser_answer == "y":
+            webbrowser.open_new('https://warframe.market/items/' + search.replace(' ', '_'))    
+    browser_open()
+
 
     # Restart the script
     def restart_script():
@@ -76,7 +79,9 @@ def WarframeMain():
             print('Goodbye')
     restart_script()  
 
-#Testing API responses according to URL in the program
+###########################################################################################################################
+# First code executed here
+# Testing API responses according to URL in the program
 print("\nTesting API responses\n")
 WMresponseR = requests.get(main_URL)
 print(WMresponseR)
@@ -87,7 +92,7 @@ if WMresponseR.status_code == 200:
 elif WMresponseR.status_code == 404:
     print("API ERROR\n")
     print("Something is wrong about the status of the API, check the URL used, the status of warframe market, your internet connection, your firewall and launch again the program.")
-    close_input = input() #to not instantly close the program on windows
+    close_input = input() # to not instantly close the window program
     
 
 """
