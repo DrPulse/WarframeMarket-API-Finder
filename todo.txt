@@ -1,5 +1,5 @@
 - Sélection et affichage des 5 prix les plus bas des dernières 24h
-    Presque OK, tri à faire sur la string date pour affichage
+    prix des 24 dernières heures ok
 
 - Ajout de fonctions pour clarifier le code
     fonction globale OK + restart script
