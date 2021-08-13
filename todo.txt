@@ -1,5 +1,7 @@
+- implémentation des autres plateformes OK
+
 - Sélection et affichage des 5 prix les plus bas des dernières 24h
-    prix des 24 dernières heures ok
+    OK + nombre dynamique si moins d'item
 
 - Ajout de fonctions pour clarifier le code
     fonction globale OK + restart script

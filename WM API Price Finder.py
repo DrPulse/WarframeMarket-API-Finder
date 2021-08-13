@@ -13,7 +13,7 @@ main_URL = "https://api.warframe.market/v1/items"
 login_URL = "https://api.warframe.market/v1/auth/signin"
 profile_URL = "https://api.warframe.market/v1/profile"
 
-Nbr_item_output = 5
+Nbr_item_output = 10
 Plateform_Selector = 1
 
 #Function for printing the chosen plateform
@@ -30,6 +30,7 @@ def plateform_print(input_plat):
 # Main function that will loop forever
 def WarframeMain():
     
+    Nbr_item_output = 10
     # Searching for item in a loop if it fails
     while True:
         print("\nSearch for an item")
@@ -69,13 +70,18 @@ def WarframeMain():
                 WMList.insert(j,data_access[i-1])
                 j+=1
 
-    # Sorting by date first and then lowest price
+    # Sorting by price first and then date
     SortedWMList = sorted(WMList, key= lambda x: (x['platinum'], x['last_update']))
-    print("\nThe", Nbr_item_output, "minimum prices found in the last ~24 hours for " + WMsearch.upper().replace('_', ' ') +" are\n")
+    WMListLen = len(SortedWMList)
+    
+    # Print of only by default the 10 first elements or all elements if < 10
+    if(WMListLen < Nbr_item_output):
+        Nbr_item_output = WMListLen
 
-    # Print of only the 5 first elements
+    print("\nThe", Nbr_item_output, "minimum prices found in the last ~24 hours for " + WMsearch.upper().replace('_', ' ') +" are\n")
     for element in range(Nbr_item_output):
         print(SortedWMList[element]['platinum'],"platinum as of :", SortedWMList[element]['last_update'][0:10])
+
 
     # Ask to open the web page of the requested item
     def browser_open():
@@ -93,12 +99,11 @@ def WarframeMain():
         if restart_answer == "y" or restart_answer == "":
             WarframeMain()
         elif restart_answer == "n":
-            print('\nEnter any key to close the program')
+            print('\nPress Enter to close the program')
             close_input = input() # to not instantly close the window program
     restart_script()  
 
     
-
 ###########################################################################################################################
 # First code executed here
 
@@ -108,7 +113,7 @@ Date_Current = Date_Today.strftime("%Y-%m-%d")
 Date_Yesterday = (Date_Today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
 # Testing API responses according to URL in the program
-print("\nTesting API responses\n")
+print("Testing API responses\n")
 WMresponseR = requests.get(main_URL)
 print(WMresponseR)
 
@@ -125,7 +130,7 @@ if WMresponseR.status_code == 200:
         else:
             print("\nError while selecting the plateform")
 
-    print("You have chosen the following plateform :",plateform_print(Plateform_Selector))
+    print("You have chosen the following plateform :",plateform_print(Plateform_Selector).upper())
     WarframeMain()
 elif WMresponseR.status_code == 404:
     print("API ERROR\n")
