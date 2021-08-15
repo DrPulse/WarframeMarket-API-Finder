@@ -13,11 +13,42 @@ main_URL = "https://api.warframe.market/v1/items"
 login_URL = "https://api.warframe.market/v1/auth/signin"
 profile_URL = "https://api.warframe.market/v1/profile"
 
+#Variables default value
 Nbr_item_output = 10
-Plateform_Selector = 1
+Platform_Search = 1
 
-#Function for printing the chosen plateform
-def plateform_print(input_plat):
+# Function for the begining of the program for showing the first text and choose waht to do
+def start_menu():
+    Info_text = ("\nThis program has for now 2 main features : \nA search function for a mod or item of the market,"
+        "and a tracking feature for set items and price in a file that you can modify via this program or directly." 
+        "\nYou will be alerted if one or more items are available on the website at the set price or lower "
+        "\n\nWhat do you want to do : 1 (default) : search \t 2 : track item price")
+    print(Info_text)
+    Menu_input = input()
+    if Menu_input == "" or Menu_input == "1":
+        search_item()
+    elif Menu_input == "2":
+        #insert function for tracking
+        print("yes")
+
+
+#Function to select which platform you use
+def platform_selector():
+    while True:
+            print("\nFor which platform do you want to use this program ? PC is by default\n 1 - PC \t2 - PS4 \t3 - XBOX \t4 - SWITCH\n")
+            platform_selector = input()
+            if platform_selector == "1" or platform_selector == "2" or platform_selector == "3" or platform_selector == "4" or platform_selector == "":
+                if(platform_selector == ""): platform_selector = "1"
+                break
+            else:
+                print("\nError while selecting the platform")
+    platform = platform_print(platform_selector).upper()
+    print("You have chosen the following platform :",platform)
+    return platform
+
+
+# Function for printing the chosen platform
+def platform_print(input_plat):
         Platform = {
             "1": 'pc',
             "2": 'ps4',
@@ -27,22 +58,46 @@ def plateform_print(input_plat):
         return Platform.get(input_plat)
 
 
-# Main function that will loop forever
-def WarframeMain():
+# Ask to open the web page of the requested item
+def browser_open(search_string):
+    print("\nWould you like to buy/sell " + search_string.upper().replace('_', ' ') + " ? y/N")
+    browser_answer = input()
+    if browser_answer == "y":
+        webbrowser.open_new('https://warframe.market/items/' + search_string.replace(' ', '_')) 
+
+
+# Restart the script or transfer to main menu
+def restart_script():
+    print("\nStart a new search? Y/n")
+    restart_answer = input()
+    if restart_answer == "y" or restart_answer == "":
+        search_item()
+    else:
+        print("\nDo you want to go to the main menu ? Y/n")
+        restart_menu = input()
+        if restart_menu == "y" or restart_menu == "":
+            start_menu()
+        else:
+            print('\nPress Enter to close the program')
+            close_input = input() # to not instantly close the window program
+
+
+# Function that will search for a specific item or mod in the market
+def search_item():
     
     Nbr_item_output = 10
+    Platform_Search = platform_selector()
+
     # Searching for item in a loop if it fails
     while True:
         print("\nSearch for an item")
         WMsearch = input()
         print("\nSearching for " + WMsearch.upper().replace('_', ' ') + "...\n")
 
-        head = {'content type': 'application/json', 'Platform': plateform_print(Plateform_Selector)}
-
-        #WMsearch = "mesa_prime_set"
+        # Request of the item on the appropriate platform
+        head = {'content type': 'application/json', 'Platform': platform_print(Platform_Search)}
         WMitemR = requests.get('https://api.warframe.market/v1/items/' + WMsearch.replace(' ', '_') + '/orders', headers=head)
-        #WMitemR = requests.get('https://api.warframe.market/v1/items/mesa_prime_set/statistics') # a retirer a terme
-        #pprint.pprint(WMitemR.json()) #print de test pour les infos de l'item
+       
         print(WMitemR)
         if WMitemR.status_code == 200:
             print("Request OK\n")
@@ -56,7 +111,7 @@ def WarframeMain():
         json.dump(data, file, ensure_ascii=False, indent=4)
 
     # Looking for the lowest prices
-    MinPrice = data['payload']['orders'][0]['platinum'] #Grab the first sell value of live statistics for the last 48 hours
+    MinPrice = data['payload']['orders'][1]['platinum'] #Grab the first sell value of live statistics for the last 48 hours
     data_access = data['payload']['orders'] #Precising the data field
 
     # Loop for determining the lowest price available
@@ -82,28 +137,12 @@ def WarframeMain():
     for element in range(Nbr_item_output):
         print(SortedWMList[element]['platinum'],"platinum as of :", SortedWMList[element]['last_update'][0:10])
 
-
-    # Ask to open the web page of the requested item
-    def browser_open():
-        print("\nWould you like to buy/sell " + WMsearch.upper().replace('_', ' ') + " ? y/N")
-        browser_answer = input()
-        if browser_answer == "y":
-            webbrowser.open_new('https://warframe.market/items/' + WMsearch.replace(' ', '_'))    
-    browser_open()
-
-
-    # Restart the script
-    def restart_script():
-        print('\nStart a new search? Y/n')
-        restart_answer = input()
-        if restart_answer == "y" or restart_answer == "":
-            WarframeMain()
-        elif restart_answer == "n":
-            print('\nPress Enter to close the program')
-            close_input = input() # to not instantly close the window program
+    browser_open(WMsearch)
     restart_script()  
 
-    
+
+###########################################################################################################################
+#                                                            MAIN                                                         #
 ###########################################################################################################################
 # First code executed here
 
@@ -117,25 +156,18 @@ print("Testing API responses\n")
 WMresponseR = requests.get(main_URL)
 print(WMresponseR)
 
-#Program starting only if the API works, ask for the plateform to look for
+#Program starting only if the API works, ask for the platform to look for
 if WMresponseR.status_code == 200:
-    print("API OK\n")
-    
-    while True:
-        print("\nFor which plateform do you want to use this program ? PC is by default\n 1 - PC \t2 - PS4 \t3 - XBOX \t4 - SWITCH\n")
-        Plateform_Selector = input()
-        if Plateform_Selector == "1" or Plateform_Selector == "2" or Plateform_Selector == "3" or Plateform_Selector == "4" or Plateform_Selector == "":
-            if(Plateform_Selector == ""): Plateform_Selector = "1"
-            break
-        else:
-            print("\nError while selecting the plateform")
+    print("API OK\n") 
+    start_menu()
 
-    print("You have chosen the following plateform :",plateform_print(Plateform_Selector).upper())
-    WarframeMain()
+    #search_item()
 elif WMresponseR.status_code == 404:
     print("API ERROR\n")
     print("Something is wrong about the status of the API, check the URL used, the status of warframe market, your internet connection, your firewall and launch again the program.")
     close_input = input() # to not instantly close the window program
+else:
+    print(WMresponseR.status_code)
     
 
 """
