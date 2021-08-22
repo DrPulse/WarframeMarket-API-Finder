@@ -387,7 +387,7 @@ def main():
     WMresponseR = requests.get(main_URL)
     print(WMresponseR)
 
-    #Program starting only if the API works, ask for the platform to look for
+    #Program starting only if the API works, redirect to the menu selector
     if WMresponseR.status_code == 200:
         print("API OK\n") 
         start_menu()
